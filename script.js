@@ -139,11 +139,16 @@ function displayResult(data) {
     minute: "2-digit",
   });
 
-  // convert from celcius to kelvin
-  // const calcTemp = data.main.temp - 273;
-  // const temp = Math.round(calcTemp);
+  const countryName = new Intl.DisplayNames(["en"], {
+    type: "region",
+  }).of(data.sys.country);
 
-  weatherDisplay.innerHTML = `<h2 class="text-2xl font-bold tracking-tight text-white mb-1">${data.name}</h2>
+  weatherDisplay.innerHTML = `<div class="flex items-start justify-between w-full mb-3">
+            <h2 class="text-2xl font-bold tracking-tight text-white mb-1">${data.name}</h2>
+            <span class="text-xs uppercase tracking-widest font-medium text-[#3B82F6] bg-[#1A1A1E] border border-[#2D2D34] rounded-full px-3 py-2">
+              ${countryName}
+            </span>
+          </div>
           <p
             class="text-xs text-[#64748B] uppercase tracking-widest font-semibold mb-6"
           >
