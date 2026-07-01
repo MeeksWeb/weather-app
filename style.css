@@ -1,0 +1,32 @@
+body {
+  transition: background 0.5s ease;
+}
+
+/* The container that centers the loader */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+/* The actual spinning ring */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #2D2D34; 
+  border-top-color: #ffffff;  
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Hidden state utility class */
+.hidden {
+  display: none !important;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

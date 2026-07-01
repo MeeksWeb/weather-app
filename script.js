@@ -1,16 +1,69 @@
 const form = document.getElementById("weather-form");
 const searchInput = document.getElementById("search-input");
 const errorMessage = document.getElementById("error-message");
+const locationDeniedMessage = document.getElementById("location-denied");
 const weatherDisplay = document.getElementById("weather-display");
-const weatherContainer = document.getElementById("weather-container");
+const loader = document.getElementById("loader");
+const mainContent = document.getElementById("main-content");
 const API_KEY = "90b69d5f72f75dd73b0b538246fb5410";
 const BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 const ENDPOINT_URL =
   "https://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}&units=metric";
 
+const defaultBodyBackground =
+  "linear-gradient(180deg, #121214 0%, #0f172a 100%)";
+
+document.body.style.background = defaultBodyBackground;
+
+document.body.style.transition = "background 0.5s ease";
+
+function updateBodyBackground(weatherCondition) {
+  const weather = weatherCondition.toLowerCase() || "";
+  switch (weather) {
+    case "clear":
+      document.body.style.background =
+        "linear-gradient(180deg, #38bdf8 0%, #0d6efd 100%)";
+      break;
+    case "rain":
+    case "drizzle":
+    case "thunderstorm":
+      document.body.style.background =
+        "linear-gradient(180deg, #334155 0%, #0f172a 100%), linear-gradient(180deg, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.9))";
+      break;
+    case "clouds":
+      document.body.style.background =
+        "linear-gradient(180deg, #64748b 0%, #0f172a 100%)";
+      break;
+    case "snow":
+      document.body.style.background =
+        "linear-gradient(180deg, #e2e8f0 0%, #38bdf8 100%)";
+      break;
+    case "mist":
+    case "haze":
+    case "fog":
+      document.body.style.background =
+        "linear-gradient(180deg, #475569 0%, #0f172a 100%)";
+      break;
+    default:
+      document.body.style.background = defaultBodyBackground;
+      break;
+  }
+}
+
+function showLoader() {
+  loader.classList.remove("hidden");
+  mainContent.classList.add("hidden");
+}
+
+function hideLoader() {
+  loader.classList.add("hidden");
+  mainContent.classList.remove("hidden");
+}
+
 //fetch weather takes in an argument(inpputData) that can either be an object containing users location or inputed city
 async function fetchWeather(inputData) {
   try {
+    showLoader();
     let url;
 
     // latitude & longitude
@@ -24,22 +77,27 @@ async function fetchWeather(inputData) {
 
     if (!res.ok) {
       cityNotFound();
-      // fetchWeather("uyo")
+      hideLoader();
       return;
     }
 
     const data = await res.json();
+    hideLoader();
+    updateBodyBackground(data.weather[0].main);
     console.log(data);
     displayResult(data);
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    hideLoader();
+    cityNotFound();
   }
 }
 
 //function to get input
 function getInput(e) {
   e.preventDefault();
-  const text = searchInput.value;
+  const text = searchInput.value.trim();
+  if (!text) return;
   fetchWeather(text);
   searchInput.value = "";
 }
@@ -85,9 +143,7 @@ function displayResult(data) {
   // const calcTemp = data.main.temp - 273;
   // const temp = Math.round(calcTemp);
 
-  const div = document.createElement("div");
-  div.setAttribute("id", "weather-display");
-  div.innerHTML = `<h2 class="text-2xl font-bold tracking-tight text-white mb-1">${data.name}</h2>
+  weatherDisplay.innerHTML = `<h2 class="text-2xl font-bold tracking-tight text-white mb-1">${data.name}</h2>
           <p
             class="text-xs text-[#64748B] uppercase tracking-widest font-semibold mb-6"
           >
@@ -108,7 +164,6 @@ function displayResult(data) {
           <p class="text-sm text-[#94A3B8] font-medium capitalize mb-6">
             ${data.weather[0].description}
           </p>
-
           <hr class="w-full border-[#2D2D34] mb-6" />
 
           <div class="grid grid-cols-3 w-full gap-4">
@@ -175,27 +230,23 @@ function displayResult(data) {
           </div>
           
           `;
-
-  weatherDisplay.appendChild(div);
 }
 
 // function to display if result not found
 function cityNotFound() {
   errorMessage.classList.remove("hidden");
-  // errorMessage.classList.remove("block")
 
   setTimeout(() => {
-    errorMessage.remove();
+    errorMessage.classList.add("hidden");
   }, 3000);
 }
 
-// function to display if loaction is denied
+// function to display if location is denied
 function locationDenied() {
-  errorMessage.classList.remove("hidden");
-  // errorMessage.classList.remove("block")
+  locationDeniedMessage.classList.remove("hidden");
 
   setTimeout(() => {
-    errorMessage.remove();
+    locationDeniedMessage.classList.add("hidden");
   }, 3000);
 }
 
