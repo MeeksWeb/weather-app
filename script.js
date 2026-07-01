@@ -107,6 +107,12 @@ function usersLocation() {
   //default loaction incase user denies access
   const location = "Lagos";
 
+  const options = {
+    enableHighAccuracy: false,
+    timeout: 5000,
+    maximumAge: 300000,
+  };
+
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const loc = position.coords;
