@@ -3,6 +3,7 @@ const searchInput = document.getElementById("search-input");
 const errorMessage = document.getElementById("error-message");
 const locationDeniedMessage = document.getElementById("location-denied");
 const weatherDisplay = document.getElementById("weather-display");
+const weatherContainer = document.getElementById("weather-container");
 const loader = document.getElementById("loader");
 const mainContent = document.getElementById("main-content");
 const API_KEY = "90b69d5f72f75dd73b0b538246fb5410";
@@ -82,9 +83,10 @@ async function fetchWeather(inputData) {
     }
 
     const data = await res.json();
+    weatherDisplay.classList.remove("hidden");
     hideLoader();
     updateBodyBackground(data.weather[0].main);
-    console.log(data);
+    // console.log(data);
     displayResult(data);
   } catch (error) {
     console.error(error);
